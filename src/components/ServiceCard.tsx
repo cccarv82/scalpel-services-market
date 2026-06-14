@@ -11,9 +11,21 @@ interface Props {
   onToggleActive?: () => void
   onEdit?: () => void
   onDelete?: () => void
+  onReport?: () => void
+  onProviderClick?: () => void
 }
 
-export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onToggleActive, onEdit, onDelete }: Props) {
+export function ServiceCard({
+  service,
+  ownerView,
+  onRequest,
+  onCopyInvite,
+  onToggleActive,
+  onEdit,
+  onDelete,
+  onReport,
+  onProviderClick,
+}: Props) {
   const price = formatPrice(service.priceCurrency, service.priceMin, service.priceMax, service.priceTiers)
   const hasTiers = (service.priceTiers?.length ?? 0) > 0
   const currencyUnit = CURRENCY_LABEL[service.priceCurrency]
@@ -116,7 +128,27 @@ export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onTog
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11 }}>
         <span style={{ opacity: 0.7 }}>
-          {service.providerName}
+          {onProviderClick ? (
+            <button
+              type="button"
+              onClick={onProviderClick}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                color: 'inherit',
+                font: 'inherit',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                textUnderlineOffset: 2,
+                textDecorationColor: 'rgba(255,255,255,0.3)',
+              }}
+            >
+              {service.providerName}
+            </button>
+          ) : (
+            service.providerName
+          )}
           {service.providerCharName && <span style={{ opacity: 0.5 }}> · {service.providerCharName}</span>}
         </span>
         {service.ratingCount > 0 && (
@@ -159,6 +191,16 @@ export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onTog
             {onCopyInvite && service.providerCharName && (
               <button type="button" style={btn} onClick={onCopyInvite} title={`Copy /invite ${service.providerCharName}`}>
                 Copy /invite
+              </button>
+            )}
+            {onReport && (
+              <button
+                type="button"
+                style={{ ...btn, marginLeft: 'auto', fontSize: 11, opacity: 0.7 }}
+                onClick={onReport}
+                title="Report this service"
+              >
+                Report
               </button>
             )}
           </>

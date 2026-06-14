@@ -5,8 +5,10 @@ import { useStore } from '../store'
 import { Login } from './Login'
 import { MyServices } from './MyServices'
 import { Profile } from './Profile'
+import { PublicProfile } from './PublicProfile'
 import { Requests } from './Requests'
 import { ServiceBoard } from './ServiceBoard'
+import { SettingsPanel } from './SettingsPanel'
 import { btn } from './ui'
 
 const INCOMING_KINDS = ['new_request'] as const
@@ -74,6 +76,7 @@ export function App({ ctx }: Props) {
           onClick={() => setView('outgoing')}
         />
         <div style={{ flex: 1 }} />
+        <Tab label="⚙" active={view === 'settings'} onClick={() => setView('settings')} />
         <Tab label={user.displayName} active={view === 'profile'} onClick={() => setView('profile')} />
       </header>
       <main style={{ flex: 1, overflow: 'auto' }}>
@@ -82,6 +85,8 @@ export function App({ ctx }: Props) {
         {view === 'incoming' && <Requests role="incoming" />}
         {view === 'outgoing' && <Requests role="outgoing" />}
         {view === 'profile' && <Profile ctx={ctx} />}
+        {view === 'settings' && <SettingsPanel ctx={ctx} />}
+        {view === 'public-profile' && <PublicProfile />}
       </main>
     </div>
   )

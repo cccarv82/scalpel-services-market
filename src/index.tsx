@@ -5,9 +5,7 @@ import { App } from './components/App'
 import { TAB_ICON } from './components/icons'
 import { OverlayNotif } from './components/OverlayNotif'
 import { getMe, listEvents } from './lib/api'
-import { loadFromStorage, persistAuth, persistLastEventTs, useStore } from './store'
-
-const POLL_INTERVAL_MS = 5_000
+import { loadFromStorage, persistAuth, persistLastEventTs, persistSettings, useStore } from './store'
 
 let audioCtx: AudioContext | null = null
 function beep() {
@@ -30,6 +28,7 @@ function beep() {
 const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
   const stored = await loadFromStorage(ctx.storage)
   useStore.getState().hydrate(stored)
+  await persistSettings(ctx.storage, stored.settings)
 
   if (stored.token) {
     try {
@@ -65,7 +64,7 @@ const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
             ctx.openOverlay()
           } catch {}
         }
-        if (hadNewRequest) beep()
+        if (hadNewRequest && useStore.getState().settings.beepOnNewRequest) beep()
       } else if (res.serverTime !== s.lastEventTs) {
         await persistLastEventTs(ctx.storage, res.serverTime)
       }
@@ -75,7 +74,7 @@ const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
     pollTimer = setTimeout(async () => {
       await pollEvents()
       schedulePoll()
-    }, POLL_INTERVAL_MS)
+    }, useStore.getState().settings.pollIntervalMs)
   }
   schedulePoll()
 

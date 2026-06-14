@@ -210,11 +210,43 @@ export async function markEventRead(token: string, id: string): Promise<{ ok: tr
 
 // --- Public profile ---
 
-export async function getUserProfile(id: string): Promise<{
-  user: { id: string; displayName: string; poeCharName: string | null; defaultLeague: string | null; poeVersion: number; createdAt: string }
-  rating: { average: number; count: number }
+export interface PublicProfile {
+  user: {
+    id: string
+    displayName: string
+    poeCharName: string | null
+    defaultLeague: string | null
+    poeVersion: number
+    createdAt: string
+  }
+  rating: {
+    average: number
+    count: number
+    breakdown: Record<'1' | '2' | '3' | '4' | '5', number>
+  }
   stats: { activeServices: number; completedJobs: number }
-  activeServices: Array<{ id: string; title: string; category: string; priceCurrency: string; priceMin: string | null; priceMax: string | null; league: string; poeVersion: number }>
-}> {
+  activeServices: Array<{
+    id: string
+    title: string
+    category: string
+    priceCurrency: string
+    priceMin: string | null
+    priceMax: string | null
+    league: string
+    poeVersion: number
+  }>
+  recentRatings: Array<{
+    id: string
+    stars: number
+    role: 'client_rates_provider' | 'provider_rates_client'
+    createdAt: string
+  }>
+}
+
+export async function getUserProfile(id: string): Promise<PublicProfile> {
   return api(`/api/users/${id}`)
+}
+
+export async function reportService(token: string, id: string, reason: string): Promise<{ ok: true; totalReports: number }> {
+  return api(`/api/services/${id}/report`, { method: 'POST', body: { reason }, token })
 }

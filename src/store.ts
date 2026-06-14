@@ -6,7 +6,18 @@ const KEYS = {
   token: 'token',
   user: 'user',
   lastEventTs: 'lastEventTs',
+  settings: 'settings',
 } as const
+
+export interface PluginSettings {
+  beepOnNewRequest: boolean
+  pollIntervalMs: number
+}
+
+export const DEFAULT_SETTINGS: PluginSettings = {
+  beepOnNewRequest: true,
+  pollIntervalMs: 5_000,
+}
 
 interface Store {
   ready: boolean
@@ -23,9 +34,15 @@ interface Store {
   lastEventTs: number
 
   // UI
-  view: 'login' | 'board' | 'mine' | 'incoming' | 'outgoing' | 'profile'
+  view: 'login' | 'board' | 'mine' | 'incoming' | 'outgoing' | 'profile' | 'settings' | 'public-profile'
+  publicProfileUserId: string | null
 
-  hydrate(payload: { token: string | null; user: AuthedUser | null; lastEventTs: number }): void
+  // Settings
+  settings: PluginSettings
+
+  hydrate(payload: { token: string | null; user: AuthedUser | null; lastEventTs: number; settings: PluginSettings }): void
+  setSettings(patch: Partial<PluginSettings>): void
+  openPublicProfile(userId: string): void
   setAuth(token: string, me: MeResponse): void
   logout(): void
   setMe(me: MeResponse): void
@@ -51,9 +68,24 @@ export const useStore = create<Store>((set) => ({
   events: [],
   lastEventTs: 0,
   view: 'login',
+  publicProfileUserId: null,
+  settings: DEFAULT_SETTINGS,
 
-  hydrate({ token, user, lastEventTs }) {
-    set({ token, user, lastEventTs, ready: true, view: token && user ? 'board' : 'login' })
+  hydrate({ token, user, lastEventTs, settings }) {
+    set({
+      token,
+      user,
+      lastEventTs,
+      settings: { ...DEFAULT_SETTINGS, ...settings },
+      ready: true,
+      view: token && user ? 'board' : 'login',
+    })
+  },
+  setSettings(patch) {
+    set((s) => ({ settings: { ...s.settings, ...patch } }))
+  },
+  openPublicProfile(userId) {
+    set({ publicProfileUserId: userId, view: 'public-profile' })
   },
 
   setAuth(token, me) {
@@ -120,13 +152,19 @@ export async function loadFromStorage(storage: PluginStorage): Promise<{
   token: string | null
   user: AuthedUser | null
   lastEventTs: number
+  settings: PluginSettings
 }> {
-  const [token, user, lastEventTs] = await Promise.all([
+  const [token, user, lastEventTs, settings] = await Promise.all([
     storage.get<string>(KEYS.token),
     storage.get<AuthedUser>(KEYS.user),
     storage.get<number>(KEYS.lastEventTs),
+    storage.get<PluginSettings>(KEYS.settings),
   ])
-  return { token, user, lastEventTs: lastEventTs ?? 0 }
+  return { token, user, lastEventTs: lastEventTs ?? 0, settings: { ...DEFAULT_SETTINGS, ...(settings ?? {}) } }
+}
+
+export async function persistSettings(storage: PluginStorage, settings: PluginSettings): Promise<void> {
+  await storage.set(KEYS.settings, settings)
 }
 
 export async function persistAuth(storage: PluginStorage, token: string | null, user: AuthedUser | null): Promise<void> {

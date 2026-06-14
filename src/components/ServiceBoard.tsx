@@ -3,9 +3,12 @@ import { listServices } from '../lib/api'
 import { copyToClipboard } from '../lib/format'
 import { useStore } from '../store'
 import type { ServiceCategory, ServiceListItem } from '../types'
+import { ReportForm } from './ReportForm'
 import { RequestModal } from './RequestModal'
 import { ServiceCard } from './ServiceCard'
 import { btn, input } from './ui'
+
+const PAGE_SIZE = 20
 
 const CATEGORIES: { value: ServiceCategory | ''; label: string }[] = [
   { value: '', label: 'All' },
@@ -28,10 +31,14 @@ export function ServiceBoard() {
   const [league, setLeague] = useState(user?.defaultLeague ?? '')
   const [poeVersion, setPoeVersion] = useState<1 | 2>((user?.poeVersion as 1 | 2) ?? 2)
   const [q, setQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<ServiceListItem | null>(null)
+  const [reporting, setReporting] = useState<ServiceListItem | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const openPublicProfile = useStore((s) => s.openPublicProfile)
 
   const fetchList = useMemo(
     () => async () => {
@@ -43,21 +50,29 @@ export function ServiceBoard() {
           league: league || undefined,
           poeVersion,
           q: q.trim() || undefined,
-          pageSize: 50,
+          page,
+          pageSize: PAGE_SIZE,
         })
         setServices(res.services)
+        setTotal(res.total)
       } catch (e) {
         setError((e as Error).message)
       } finally {
         setLoading(false)
       }
     },
-    [token, category, league, poeVersion, q, setServices],
+    [token, category, league, poeVersion, q, page, setServices],
   )
 
   useEffect(() => {
     void fetchList()
   }, [fetchList])
+
+  useEffect(() => {
+    setPage(1)
+  }, [category, league, poeVersion, q])
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   const flashToast = (msg: string) => {
     setToast(msg)
@@ -74,6 +89,20 @@ export function ServiceBoard() {
         onCreated={() => {
           setModal(null)
           flashToast('Request sent. Wait for provider to accept.')
+        }}
+      />
+    )
+  }
+
+  if (reporting && token) {
+    return (
+      <ReportForm
+        service={reporting}
+        token={token}
+        onClose={() => setReporting(null)}
+        onReported={() => {
+          setReporting(null)
+          flashToast('Report submitted. Thank you.')
         }}
       />
     )
@@ -133,7 +162,7 @@ export function ServiceBoard() {
           <ServiceCard
             key={svc.id}
             service={svc}
-            onRequest={token ? () => setModal(svc) : undefined}
+            onRequest={token && svc.providerId !== user?.id ? () => setModal(svc) : undefined}
             onCopyInvite={
               svc.providerCharName
                 ? () => {
@@ -142,6 +171,8 @@ export function ServiceBoard() {
                   }
                 : undefined
             }
+            onReport={token && svc.providerId !== user?.id ? () => setReporting(svc) : undefined}
+            onProviderClick={() => openPublicProfile(svc.providerId)}
           />
         ))}
         {services.length === 0 && !loading && (
@@ -150,6 +181,25 @@ export function ServiceBoard() {
           </div>
         )}
       </div>
+
+      {total > PAGE_SIZE && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, paddingTop: 6 }}>
+          <button type="button" style={btn} disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+            ← Prev
+          </button>
+          <span style={{ fontSize: 12, opacity: 0.65 }}>
+            Page {page} / {totalPages} · {total} total
+          </span>
+          <button
+            type="button"
+            style={btn}
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next →
+          </button>
+        </div>
+      )}
 
       {toast && (
         <div
