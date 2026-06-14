@@ -50,14 +50,17 @@ export function RequestModal({ service, token, defaultCharName, onClose, onCreat
         position: 'fixed',
         inset: 0,
         background: 'rgba(0,0,0,0.6)',
-        display: 'grid',
-        placeItems: 'center',
         zIndex: 100,
+        overflowY: 'auto',
+        padding: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ ...card, width: 'min(420px, 90vw)', display: 'grid', gap: 10 }}
+        style={{ ...card, width: 'min(420px, 100%)', margin: 'auto', display: 'grid', gap: 10 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <strong style={{ fontSize: 14 }}>Request service</strong>

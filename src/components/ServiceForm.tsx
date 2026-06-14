@@ -105,15 +105,17 @@ export function ServiceForm({ token, existing, defaultLeague, defaultPoeVersion,
         position: 'fixed',
         inset: 0,
         background: 'rgba(0,0,0,0.6)',
-        display: 'grid',
-        placeItems: 'center',
         zIndex: 100,
-        padding: 12,
+        overflowY: 'auto',
+        padding: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ ...card, width: 'min(560px, 100%)', maxHeight: '90vh', overflow: 'auto', display: 'grid', gap: 10 }}
+        style={{ ...card, width: 'min(560px, 100%)', margin: 'auto', display: 'grid', gap: 10 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <strong style={{ fontSize: 14 }}>{existing ? 'Edit service' : 'New service'}</strong>
