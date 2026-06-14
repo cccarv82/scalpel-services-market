@@ -1,7 +1,10 @@
 import type { ScalpelPluginContext } from '@scalpelpoe/plugin-sdk'
 import { useStore } from '../store'
 import { Login } from './Login'
+import { MyServices } from './MyServices'
 import { Profile } from './Profile'
+import { Requests } from './Requests'
+import { ServiceBoard } from './ServiceBoard'
 import { btn } from './ui'
 
 interface Props {
@@ -39,8 +42,11 @@ export function App({ ctx }: Props) {
         <Tab label={user.displayName} active={view === 'profile'} onClick={() => setView('profile')} />
       </header>
       <main style={{ flex: 1, overflow: 'auto' }}>
+        {view === 'board' && <ServiceBoard />}
+        {view === 'mine' && <MyServices />}
+        {view === 'incoming' && <Requests role="incoming" />}
+        {view === 'outgoing' && <Requests role="outgoing" />}
         {view === 'profile' && <Profile ctx={ctx} />}
-        {view !== 'profile' && <Placeholder ctx={ctx} label={view} />}
       </main>
     </div>
   )
@@ -64,11 +70,3 @@ function Tab({ label, active, onClick }: { label: string; active: boolean; onCli
   )
 }
 
-function Placeholder({ ctx, label }: { ctx: ScalpelPluginContext; label: string }) {
-  void ctx
-  return (
-    <div style={{ padding: 32, textAlign: 'center', opacity: 0.55 }}>
-      <p>"{label}" tab — coming in next phase</p>
-    </div>
-  )
-}
