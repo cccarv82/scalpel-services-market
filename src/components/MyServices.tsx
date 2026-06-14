@@ -58,6 +58,26 @@ export function MyServices() {
 
   if (!user || !token) return null
 
+  if (creating || editing) {
+    return (
+      <ServiceForm
+        token={token}
+        existing={editing ?? undefined}
+        defaultLeague={user.defaultLeague ?? ''}
+        defaultPoeVersion={(user.poeVersion as 1 | 2) ?? 2}
+        onClose={() => {
+          setCreating(false)
+          setEditing(null)
+        }}
+        onSaved={async () => {
+          setCreating(false)
+          setEditing(null)
+          await refresh()
+        }}
+      />
+    )
+  }
+
   return (
     <div style={{ padding: 12, display: 'grid', gap: 10 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -95,23 +115,6 @@ export function MyServices() {
         )}
       </div>
 
-      {(creating || editing) && (
-        <ServiceForm
-          token={token}
-          existing={editing ?? undefined}
-          defaultLeague={user.defaultLeague ?? ''}
-          defaultPoeVersion={(user.poeVersion as 1 | 2) ?? 2}
-          onClose={() => {
-            setCreating(false)
-            setEditing(null)
-          }}
-          onSaved={async () => {
-            setCreating(false)
-            setEditing(null)
-            await refresh()
-          }}
-        />
-      )}
     </div>
   )
 }

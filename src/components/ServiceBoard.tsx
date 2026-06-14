@@ -63,6 +63,21 @@ export function ServiceBoard() {
     setTimeout(() => setToast(null), 1500)
   }
 
+  if (modal && token && user) {
+    return (
+      <RequestModal
+        service={modal}
+        token={token}
+        defaultCharName={user.poeCharName ?? ''}
+        onClose={() => setModal(null)}
+        onCreated={() => {
+          setModal(null)
+          flashToast('Request sent. Wait for provider to accept.')
+        }}
+      />
+    )
+  }
+
   return (
     <div style={{ padding: 12, display: 'grid', gap: 10 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
@@ -134,19 +149,6 @@ export function ServiceBoard() {
           </div>
         )}
       </div>
-
-      {modal && token && user && (
-        <RequestModal
-          service={modal}
-          token={token}
-          defaultCharName={user.poeCharName ?? ''}
-          onClose={() => setModal(null)}
-          onCreated={() => {
-            setModal(null)
-            flashToast('Request sent. Wait for provider to accept.')
-          }}
-        />
-      )}
 
       {toast && (
         <div

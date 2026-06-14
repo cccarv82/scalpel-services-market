@@ -44,28 +44,12 @@ export function RequestModal({ service, token, defaultCharName, onClose, onCreat
   }
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.6)',
-        zIndex: 100,
-        overflowY: 'auto',
-        padding: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{ ...card, width: 'min(420px, 100%)', margin: 'auto', display: 'grid', gap: 10 }}
-      >
+    <div style={{ padding: 12, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ ...card, width: '100%', maxWidth: 460, display: 'grid', gap: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <strong style={{ fontSize: 14 }}>Request service</strong>
           <button type="button" style={btn} onClick={onClose}>
-            ✕
+            ← Back
           </button>
         </div>
         <div style={{ fontSize: 13, color: 'var(--text)' }}>{service.title}</div>
