@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "services-market",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "Services Market",
   "description": "Marketplace for in-game services: carries, trials, ascendancies, map hosting. Discord-authed. Currency-only payments.",
   "author": "cccarv82",

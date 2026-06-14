@@ -1,6 +1,6 @@
 {
   "name": "scalpel-services-market",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Services marketplace plugin for Scalpel (PoE1/PoE2)",
   "license": "AGPL-3.0-only",
   "private": true,
