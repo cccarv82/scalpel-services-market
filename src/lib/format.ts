@@ -1,4 +1,4 @@
-import type { PriceCurrency, ServiceCategory } from '../types'
+import type { PriceCurrency, PriceTier, ServiceCategory } from '../types'
 
 export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
   act_carry: 'Act Carry',
@@ -7,6 +7,7 @@ export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
   map_hosting: 'Map Hosting',
   trial_carry: 'Trial / Ascendancy',
   ascendancy_carry: 'Trial / Ascendancy',
+  campaign_carry: 'Campaign Carry',
   other: 'Other',
 }
 
@@ -22,8 +23,14 @@ export function formatPrice(
   currency: PriceCurrency,
   min: string | null,
   max: string | null,
+  tiers: PriceTier[] | null = null,
 ): string {
   if (currency === 'free_for_vouch') return 'Free for vouch'
+  if (tiers && tiers.length > 0) {
+    const unit = CURRENCY_LABEL[currency]
+    const lowest = tiers.reduce((m, t) => (t.price < m ? t.price : m), tiers[0].price)
+    return `from ${trimNum(String(lowest))} ${unit}`
+  }
   const lo = min != null ? trimNum(min) : null
   const hi = max != null ? trimNum(max) : null
   const unit = CURRENCY_LABEL[currency]

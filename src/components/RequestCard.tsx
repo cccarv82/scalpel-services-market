@@ -60,7 +60,7 @@ export function RequestCard({ token, request, role, onChanged, onToast }: Props)
   const inviteCharName =
     role === 'incoming' ? request.requesterCharName : request.counterparty.poeCharName
 
-  const price = formatPrice(request.service.priceCurrency, request.service.priceMin, request.service.priceMax)
+  const price = formatPrice(request.service.priceCurrency, request.service.priceMin, request.service.priceMax, null)
   const status = request.status
 
   return (

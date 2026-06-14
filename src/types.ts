@@ -5,7 +5,13 @@ export type ServiceCategory =
   | 'map_hosting'
   | 'trial_carry'
   | 'ascendancy_carry'
+  | 'campaign_carry'
   | 'other'
+
+export interface PriceTier {
+  label: string
+  price: number
+}
 
 export type PriceCurrency = 'chaos' | 'divine' | 'exalted' | 'mirror' | 'free_for_vouch'
 
@@ -41,6 +47,7 @@ export interface ServiceListItem {
   priceCurrency: PriceCurrency
   priceMin: string | null
   priceMax: string | null
+  priceTiers: PriceTier[]
   tags: string[]
   poeVersion: number
   league: string
@@ -96,6 +103,7 @@ export interface ServiceCreatePayload {
   priceCurrency: PriceCurrency
   priceMin?: number | null
   priceMax?: number | null
+  priceTiers?: PriceTier[]
   tags: string[]
   poeVersion: 1 | 2
   league: string

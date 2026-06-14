@@ -1,4 +1,4 @@
-import { CATEGORY_LABEL, formatPrice, timeAgo } from '../lib/format'
+import { CATEGORY_LABEL, CURRENCY_LABEL, formatPrice, timeAgo } from '../lib/format'
 import type { ServiceListItem } from '../types'
 import { btn, btnPrimary } from './ui'
 
@@ -13,7 +13,9 @@ interface Props {
 }
 
 export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onToggleActive, onEdit, onDelete }: Props) {
-  const price = formatPrice(service.priceCurrency, service.priceMin, service.priceMax)
+  const price = formatPrice(service.priceCurrency, service.priceMin, service.priceMax, service.priceTiers)
+  const hasTiers = (service.priceTiers?.length ?? 0) > 0
+  const currencyUnit = CURRENCY_LABEL[service.priceCurrency]
   return (
     <div
       style={{
@@ -66,20 +68,33 @@ export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onTog
       )}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
           marginTop: 4,
           paddingTop: 6,
           borderTop: '1px solid rgba(255,255,255,0.06)',
+          fontSize: 12,
         }}
       >
-        <div style={{ fontSize: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <strong>{price}</strong>
-          <span style={{ opacity: 0.5, marginLeft: 8 }}>
+          <span style={{ opacity: 0.5 }}>
             PoE{service.poeVersion} · {service.league}
           </span>
         </div>
+        {hasTiers && (
+          <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'grid', gap: 2 }}>
+            {service.priceTiers.map((t, i) => (
+              <li
+                key={`${t.label}-${i}`}
+                style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, opacity: 0.85 }}
+              >
+                <span>{t.label}</span>
+                <span>
+                  {t.price} {currencyUnit}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11 }}>
         <span style={{ opacity: 0.7 }}>

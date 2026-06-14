@@ -14,6 +14,7 @@ const CATEGORIES: { value: ServiceCategory | ''; label: string }[] = [
   { value: 'leveling_carry', label: 'Leveling' },
   { value: 'map_hosting', label: 'Map host' },
   { value: 'trial_carry', label: 'Trial' },
+  { value: 'campaign_carry', label: 'Campaign' },
   { value: 'other', label: 'Other' },
 ]
 
