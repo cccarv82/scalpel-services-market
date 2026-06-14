@@ -7,7 +7,25 @@ import { OverlayNotif } from './components/OverlayNotif'
 import { getMe, listEvents } from './lib/api'
 import { loadFromStorage, persistAuth, persistLastEventTs, useStore } from './store'
 
-const POLL_INTERVAL_MS = 10_000
+const POLL_INTERVAL_MS = 5_000
+
+let audioCtx: AudioContext | null = null
+function beep() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+    const ctx = audioCtx
+    const o = ctx.createOscillator()
+    const g = ctx.createGain()
+    o.connect(g)
+    g.connect(ctx.destination)
+    o.type = 'sine'
+    o.frequency.value = 880
+    g.gain.setValueAtTime(0.12, ctx.currentTime)
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35)
+    o.start()
+    o.stop(ctx.currentTime + 0.35)
+  } catch {}
+}
 
 const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
   const stored = await loadFromStorage(ctx.storage)
@@ -31,9 +49,14 @@ const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
     try {
       const res = await listEvents(s.token, s.lastEventTs || undefined)
       if (res.events.length > 0) {
+        const hadNewRequest = res.events.some((e) => e.kind === 'new_request')
         const hadActionable = res.events.some(
           (e) =>
-            e.kind === 'new_request' || e.kind === 'request_accepted' || e.kind === 'request_completed',
+            e.kind === 'new_request' ||
+            e.kind === 'request_accepted' ||
+            e.kind === 'request_completed' ||
+            e.kind === 'request_declined' ||
+            e.kind === 'request_cancelled',
         )
         s.pushEvents(res.events, res.serverTime)
         await persistLastEventTs(ctx.storage, res.serverTime)
@@ -42,6 +65,7 @@ const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
             ctx.openOverlay()
           } catch {}
         }
+        if (hadNewRequest) beep()
       } else if (res.serverTime !== s.lastEventTs) {
         await persistLastEventTs(ctx.storage, res.serverTime)
       }

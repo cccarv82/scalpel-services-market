@@ -1,6 +1,6 @@
 import type { PluginStorage } from '@scalpelpoe/plugin-sdk'
 import { create } from 'zustand'
-import type { AuthedUser, EventItem, MeResponse, RequestItem, ServiceListItem } from './types'
+import type { AuthedUser, EventItem, EventKind, MeResponse, RequestItem, ServiceListItem } from './types'
 
 const KEYS = {
   token: 'token',
@@ -36,6 +36,7 @@ interface Store {
   pushEvents(list: EventItem[], serverTime: number): void
   markEventRead(id: string): void
   setView(view: Store['view']): void
+  markEventsReadByKind(kinds: EventKind[]): void
 }
 
 export const useStore = create<Store>((set) => ({
@@ -106,6 +107,12 @@ export const useStore = create<Store>((set) => ({
   },
   setView(view) {
     set({ view })
+  },
+
+  markEventsReadByKind(kinds) {
+    set((s) => ({
+      events: s.events.map((e) => (kinds.includes(e.kind) ? { ...e, read: true } : e)),
+    }))
   },
 }))
 
