@@ -67,6 +67,16 @@ export function getAuthStartUrl(deviceCode: string): string {
   return `${API_BASE}/api/auth/start?device=${encodeURIComponent(deviceCode)}`
 }
 
+// Pre-creates the device code on the server and returns the Discord URL.
+// Eliminates the race where poll() runs before the browser opens the URL.
+export async function initAuth(deviceCode: string): Promise<{ code: string; authorizeUrl: string }> {
+  const res = await fetch(`${API_BASE}/api/auth/start?device=${encodeURIComponent(deviceCode)}`, {
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new ApiError(res.status, null, `HTTP ${res.status}`)
+  return res.json()
+}
+
 export async function pollAuth(deviceCode: string): Promise<PollResponse> {
   try {
     return await api<PollResponse>(`/api/auth/poll?code=${encodeURIComponent(deviceCode)}`)

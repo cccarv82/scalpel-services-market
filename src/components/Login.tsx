@@ -1,6 +1,6 @@
 import type { ScalpelPluginContext } from '@scalpelpoe/plugin-sdk'
 import { useEffect, useRef, useState } from 'react'
-import { getAuthStartUrl, pollAuth } from '../lib/api'
+import { initAuth, pollAuth } from '../lib/api'
 import { persistAuth, useStore } from '../store'
 import { btnPrimary, card } from './ui'
 
@@ -38,7 +38,19 @@ export function Login({ ctx }: Props) {
     setStage('waiting')
     const code = randomCode()
     codeRef.current = code
-    ctx.openExternal(getAuthStartUrl(code))
+
+    // Pre-create the device code server-side BEFORE opening the browser so
+    // the polling loop can't race ahead and see a missing code -> 404.
+    let authorizeUrl: string
+    try {
+      const init = await initAuth(code)
+      authorizeUrl = init.authorizeUrl
+    } catch (e) {
+      setError(`Could not reach server: ${(e as Error).message}`)
+      setStage('error')
+      return
+    }
+    ctx.openExternal(authorizeUrl)
 
     const startedAt = Date.now()
     const TIMEOUT_MS = 10 * 60 * 1000
