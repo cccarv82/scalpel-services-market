@@ -5,8 +5,8 @@ export const CATEGORY_LABEL: Record<ServiceCategory, string> = {
   boss_carry: 'Boss Carry',
   leveling_carry: 'Leveling Carry',
   map_hosting: 'Map Hosting',
-  trial_carry: 'Trial Carry',
-  ascendancy_carry: 'Ascendancy',
+  trial_carry: 'Trial / Ascendancy',
+  ascendancy_carry: 'Trial / Ascendancy',
   other: 'Other',
 }
 

@@ -20,7 +20,6 @@ const CATEGORIES: ServiceCategory[] = [
   'leveling_carry',
   'map_hosting',
   'trial_carry',
-  'ascendancy_carry',
   'other',
 ]
 
