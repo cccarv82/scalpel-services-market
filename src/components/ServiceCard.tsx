@@ -1,6 +1,7 @@
+import { useEffect, useRef, useState } from 'react'
 import { CATEGORY_LABEL, CURRENCY_LABEL, formatPrice, timeAgo } from '../lib/format'
 import type { ServiceListItem } from '../types'
-import { btn, btnPrimary } from './ui'
+import { btn, btnDanger, btnPrimary } from './ui'
 
 interface Props {
   service: ServiceListItem
@@ -16,6 +17,23 @@ export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onTog
   const price = formatPrice(service.priceCurrency, service.priceMin, service.priceMax, service.priceTiers)
   const hasTiers = (service.priceTiers?.length ?? 0) > 0
   const currencyUnit = CURRENCY_LABEL[service.priceCurrency]
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => {
+    if (confirmTimer.current) clearTimeout(confirmTimer.current)
+  }, [])
+
+  const handleDeleteClick = () => {
+    if (!onDelete) return
+    if (confirmingDelete) {
+      if (confirmTimer.current) clearTimeout(confirmTimer.current)
+      setConfirmingDelete(false)
+      onDelete()
+      return
+    }
+    setConfirmingDelete(true)
+    confirmTimer.current = setTimeout(() => setConfirmingDelete(false), 3000)
+  }
   return (
     <div
       style={{
@@ -122,8 +140,12 @@ export function ServiceCard({ service, ownerView, onRequest, onCopyInvite, onTog
               </button>
             )}
             {onDelete && (
-              <button type="button" style={btn} onClick={onDelete}>
-                Delete
+              <button
+                type="button"
+                style={confirmingDelete ? btnDanger : btn}
+                onClick={handleDeleteClick}
+              >
+                {confirmingDelete ? 'Confirm delete?' : 'Delete'}
               </button>
             )}
           </>

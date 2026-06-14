@@ -47,7 +47,6 @@ export function MyServices() {
 
   const remove = async (svc: ServiceListItem) => {
     if (!token) return
-    if (!confirm(`Delete "${svc.title}"? This cannot be undone.`)) return
     try {
       await deleteService(token, svc.id)
       await refresh()

@@ -1,5 +1,5 @@
 import type { ScalpelPluginContext } from '@scalpelpoe/plugin-sdk'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getMe, updateMe } from '../lib/api'
 import { persistAuth, useStore } from '../store'
 import { btn, btnDanger, btnPrimary, card, input, label as labelStyle } from './ui'
@@ -20,6 +20,11 @@ export function Profile({ ctx }: Props) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [savedAt, setSavedAt] = useState<number | null>(null)
+  const [confirmingLogout, setConfirmingLogout] = useState(false)
+  const logoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => {
+    if (logoutTimer.current) clearTimeout(logoutTimer.current)
+  }, [])
 
   if (!user || !token) return null
 
@@ -43,9 +48,15 @@ export function Profile({ ctx }: Props) {
   }
 
   const doLogout = async () => {
-    if (!confirm('Sign out?')) return
-    await persistAuth(ctx.storage, null, null)
-    logout()
+    if (confirmingLogout) {
+      if (logoutTimer.current) clearTimeout(logoutTimer.current)
+      setConfirmingLogout(false)
+      await persistAuth(ctx.storage, null, null)
+      logout()
+      return
+    }
+    setConfirmingLogout(true)
+    logoutTimer.current = setTimeout(() => setConfirmingLogout(false), 3000)
   }
 
   return (
@@ -89,7 +100,7 @@ export function Profile({ ctx }: Props) {
               {saving ? 'Saving…' : 'Save'}
             </button>
             <button type="button" style={btnDanger} onClick={doLogout}>
-              Sign out
+              {confirmingLogout ? 'Click again to confirm' : 'Sign out'}
             </button>
           </div>
         </div>
