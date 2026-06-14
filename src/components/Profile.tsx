@@ -15,7 +15,6 @@ export function Profile({ ctx }: Props) {
   const setMe = useStore((s) => s.setMe)
   const logout = useStore((s) => s.logout)
 
-  const [displayName, setDisplayName] = useState(user?.displayName ?? '')
   const [poeCharName, setPoeCharName] = useState(user?.poeCharName ?? '')
   const [defaultLeague, setDefaultLeague] = useState(user?.defaultLeague ?? ctx.getLeague() ?? '')
   const [saving, setSaving] = useState(false)
@@ -29,7 +28,6 @@ export function Profile({ ctx }: Props) {
     setError(null)
     try {
       await updateMe(token, {
-        displayName: displayName.trim() || undefined,
         poeCharName: poeCharName.trim() || null,
         defaultLeague: defaultLeague.trim() || null,
       })
@@ -73,9 +71,8 @@ export function Profile({ ctx }: Props) {
 
       <div style={card}>
         <div style={{ display: 'grid', gap: 10 }}>
-          <div>
-            <div style={labelStyle}>Display name</div>
-            <input style={input} maxLength={80} value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <div style={{ fontSize: 11, opacity: 0.55, lineHeight: 1.4 }}>
+            Your display name mirrors your Discord identity and cannot be changed here. It re-syncs from Discord on every login.
           </div>
           <div>
             <div style={labelStyle}>PoE character name (shown on your services)</div>

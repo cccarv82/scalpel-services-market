@@ -100,7 +100,6 @@ export async function getMe(token: string): Promise<MeResponse> {
 export async function updateMe(
   token: string,
   patch: {
-    displayName?: string
     poeCharName?: string | null
     defaultLeague?: string | null
     poeVersion?: 1 | 2
