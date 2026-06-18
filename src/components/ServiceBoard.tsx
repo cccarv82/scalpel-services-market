@@ -3,6 +3,7 @@ import { listServices } from '../lib/api'
 import { copyToClipboard } from '../lib/format'
 import { useStore } from '../store'
 import type { ServiceCategory, ServiceListItem } from '../types'
+import { LeagueSelect } from './LeagueSelect'
 import { ReportForm } from './ReportForm'
 import { RequestModal } from './RequestModal'
 import { ServiceCard } from './ServiceCard'
@@ -133,12 +134,7 @@ export function ServiceBoard() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        <input
-          style={{ ...input, width: 140 }}
-          placeholder="League"
-          value={league}
-          onChange={(e) => setLeague(e.target.value)}
-        />
+        <LeagueSelect poeVersion={poeVersion} value={league} onChange={setLeague} detected={user?.defaultLeague ?? ''} />
         <select
           style={{ ...input, width: 80 } as React.CSSProperties}
           value={poeVersion}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffcc4d"/>
+      <stop offset="100%" stop-color="#c97a18"/>
+    </linearGradient>
+    <linearGradient id="parchment" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f3e2b8"/>
+      <stop offset="100%" stop-color="#c4a36a"/>
+    </linearGradient>
+    <radialGradient id="seal" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#d44030"/>
+      <stop offset="100%" stop-color="#7a1e15"/>
+    </radialGradient>
+  </defs>
+  <rect width="256" height="256" rx="40" fill="#161a22"/>
+  <!-- scroll back curl -->
+  <ellipse cx="60" cy="128" rx="26" ry="62" fill="url(#amber)" stroke="#7a4a0e" stroke-width="4"/>
+  <ellipse cx="60" cy="128" rx="14" ry="50" fill="#6a3c0a"/>
+  <!-- parchment body -->
+  <rect x="60" y="66" width="140" height="124" rx="4" fill="url(#parchment)" stroke="#7a4a0e" stroke-width="4"/>
+  <!-- handshake silhouette -->
+  <path d="M86 132 L120 116 L132 122 L148 116 L168 124 L168 150 L148 158 L132 154 L120 158 L86 156 Z" fill="#5a3a18" opacity="0.5"/>
+  <path d="M96 140 Q112 132 130 140 Q146 148 162 142 L162 152 Q146 158 130 152 Q114 144 96 152 Z" fill="#3a2410"/>
+  <!-- coins -->
+  <circle cx="100" cy="110" r="9" fill="url(#amber)" stroke="#5a3a18" stroke-width="2"/>
+  <text x="100" y="116" text-anchor="middle" font-family="serif" font-size="13" font-weight="bold" fill="#5a3a18">$</text>
+  <circle cx="158" cy="98" r="9" fill="url(#amber)" stroke="#5a3a18" stroke-width="2"/>
+  <text x="158" y="104" text-anchor="middle" font-family="serif" font-size="13" font-weight="bold" fill="#5a3a18">$</text>
+  <!-- scroll front curl -->
+  <ellipse cx="200" cy="128" rx="20" ry="62" fill="url(#amber)" stroke="#7a4a0e" stroke-width="4"/>
+  <ellipse cx="200" cy="128" rx="10" ry="50" fill="#6a3c0a"/>
+  <!-- wax seal -->
+  <circle cx="130" cy="186" r="22" fill="url(#seal)" stroke="#3a0c08" stroke-width="3"/>
+  <path d="M118 180 L130 195 L142 180 M125 184 L135 184" stroke="#f7e8c2" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

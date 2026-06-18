@@ -3,6 +3,7 @@ import { ApiError, createService, updateService } from '../lib/api'
 import { CATEGORY_LABEL, CURRENCY_LABEL } from '../lib/format'
 import { useStore } from '../store'
 import type { PriceCurrency, PriceTier, ServiceCategory, ServiceListItem } from '../types'
+import { LeagueSelect } from './LeagueSelect'
 import { btn, btnPrimary, card, input, label as labelStyle } from './ui'
 
 interface Props {
@@ -298,7 +299,7 @@ export function ServiceForm({ token, existing, defaultLeague, defaultPoeVersion,
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 8 }}>
           <div>
             <div style={labelStyle}>League</div>
-            <input style={input} value={league} onChange={(e) => setLeague(e.target.value)} />
+            <LeagueSelect poeVersion={poeVersion} value={league} onChange={setLeague} detected={defaultLeague} />
           </div>
           <div>
             <div style={labelStyle}>PoE version</div>
