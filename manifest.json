@@ -1,11 +1,11 @@
 {
   "manifestVersion": 1,
   "id": "services-market",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "name": "Services Market",
   "description": "Marketplace for in-game services: carries, trials, ascendancies, map hosting. Discord-authed. Currency-only payments.",
   "author": "cccarv82",
-  "scalpelMinVersion": "0.9.13",
+  "scalpelMinVersion": "0.9.15",
   "poeVersions": [1, 2],
   "homepage": "https://github.com/cccarv82/scalpel-services-market"
 }

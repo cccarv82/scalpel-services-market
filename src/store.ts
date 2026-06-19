@@ -37,11 +37,16 @@ interface Store {
   view: 'login' | 'board' | 'mine' | 'incoming' | 'outgoing' | 'profile' | 'settings' | 'public-profile'
   publicProfileUserId: string | null
 
+  // League catalog (live from ctx.getLeagues at activation)
+  leaguesPoe1: readonly string[]
+  leaguesPoe2: readonly string[]
+
   // Settings
   settings: PluginSettings
 
   hydrate(payload: { token: string | null; user: AuthedUser | null; lastEventTs: number; settings: PluginSettings }): void
   setSettings(patch: Partial<PluginSettings>): void
+  setLeagues(poeVersion: 1 | 2, leagues: readonly string[]): void
   openPublicProfile(userId: string): void
   setAuth(token: string, me: MeResponse): void
   logout(): void
@@ -70,6 +75,8 @@ export const useStore = create<Store>((set) => ({
   view: 'login',
   publicProfileUserId: null,
   settings: DEFAULT_SETTINGS,
+  leaguesPoe1: [],
+  leaguesPoe2: [],
 
   hydrate({ token, user, lastEventTs, settings }) {
     set({
@@ -83,6 +90,9 @@ export const useStore = create<Store>((set) => ({
   },
   setSettings(patch) {
     set((s) => ({ settings: { ...s.settings, ...patch } }))
+  },
+  setLeagues(poeVersion, leagues) {
+    set(poeVersion === 1 ? { leaguesPoe1: leagues } : { leaguesPoe2: leagues })
   },
   openPublicProfile(userId) {
     set({ publicProfileUserId: userId, view: 'public-profile' })

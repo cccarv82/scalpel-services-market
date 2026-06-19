@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { buildLeagueOptions, OTHER_LEAGUE_VALUE } from '../lib/leagues'
+import { useStore } from '../store'
 import { input } from './ui'
 
 interface Props {
@@ -11,7 +12,8 @@ interface Props {
 }
 
 export function LeagueSelect({ poeVersion, value, onChange, detected, width }: Props) {
-  const options = useMemo(() => buildLeagueOptions(poeVersion, detected ?? ''), [poeVersion, detected])
+  const leagues = useStore((s) => (poeVersion === 1 ? s.leaguesPoe1 : s.leaguesPoe2))
+  const options = useMemo(() => buildLeagueOptions(leagues, detected ?? ''), [leagues, detected])
   const isKnown = options.some((o) => o.value === value)
   const [isOther, setIsOther] = useState(!isKnown && !!value)
   const style = width ? { ...input, width } : input

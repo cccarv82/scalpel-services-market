@@ -41,6 +41,17 @@ const activate: PluginActivate = async (ctx: ScalpelPluginContext) => {
     }
   }
 
+  // Pull live league lists from the host (plugin SDK 0.8.0+). Fire-and-forget;
+  // the dropdown falls back to "detected league + Other…" until the lists land.
+  if (typeof ctx.getLeagues === 'function') {
+    void Promise.all([ctx.getLeagues(1), ctx.getLeagues(2)])
+      .then(([poe1, poe2]) => {
+        useStore.getState().setLeagues(1, poe1)
+        useStore.getState().setLeagues(2, poe2)
+      })
+      .catch(() => {})
+  }
+
   let pollTimer: ReturnType<typeof setTimeout> | null = null
   const pollEvents = async () => {
     const s = useStore.getState()

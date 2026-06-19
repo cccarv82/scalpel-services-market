@@ -1,6 +1,6 @@
 {
   "name": "scalpel-services-market",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Services marketplace plugin for Scalpel (PoE1/PoE2)",
   "license": "AGPL-3.0-only",
   "private": true,
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",
-    "@scalpelpoe/plugin-sdk": "^0.7.0",
+    "@scalpelpoe/plugin-sdk": "^0.8.0",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
